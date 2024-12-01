@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <title>Registration Form</title>
+</head>
+<body>
+	<div class="container-md">
+        <form id="userForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" id="name" class="form-control" name="name" placeholder="Enter Name">
+            </div>
+
+            <div class="form-group">
+                <label for="phoneno" class="form-label">Phone No.</label>
+                <input type="text" id="phoneno" class="form-control" name="phoneNo" placeholder="Enter Phone No">
+            </div>
+
+            <div class="form-group">
+                <label for="whatsappno" class="form-label">What's App No.</label>
+                <input type="text" id="whatsappno" class="form-control" name="whatsappNo" placeholder="Enter What's App No">
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" name="email" placeholder="Enter Email">
+            </div>
+
+            <div class="form-group">
+                <label for="gender" class="form-label">Gender</label>
+                <select id="gender" class="form-select" name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </div>
+			
+			<input type="hidden" name="CountryCode" value="IN">
+            <input type="hidden" name="AgeUnit" value="Y">
+
+            <div class="form-group">
+                <label for="age" class="form-label">Age</label>
+                <input type="text" id="age" class="form-control" name="age" placeholder="Enter Age">
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-3">Submit</button>
+			
+        </form>
+		
+		<button onclick="fetchData()" class="btn btn-primary mb-3">Fetch Data</button>
+		
+    </div>
+	
+	<script>
+        async function handleSubmit(event) {
+    event.preventDefault(); // Prevent form submission's default behavior
+
+    const form = document.getElementById('userForm');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries()); // Convert FormData to a plain object
+    console.log('Form Data:', data);
+
+    try {
+        // Make the POST request using Axios
+        const response = await axios.post(
+            'http://199.192.26.248:8000/sap/opu/odata/sap/ZCDS_C_TEST_REGISTER_NEW_CDS/ZCDS_C_TEST_REGISTER_NEW',
+            data,
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'X',
+					'Access-Control-Allow-Origin': '*'
+                }
+            }
+        );
+
+        console.log('Registration successful:', response.data);
+        alert('Registration successful!');
+
+        // Optionally reset the form after successful submission
+        form.reset(); // Clear the form fields
+		} catch (error) {
+        console.error('Error during registration:', error);
+        alert('Failed to register. Please try again.');
+		}
+	}
+	
+	async function fetchData() {
+    const url = 'http://199.192.26.248:8000/sap/opu/odata/sap/ZCDS_C_TEST_REGISTER_NEW_CDS/ZCDS_C_TEST_REGISTER_NEW';
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Data fetched successfully:', data);
+        return data;
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	}
+
+
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>
